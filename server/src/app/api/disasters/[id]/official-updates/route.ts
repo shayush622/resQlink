@@ -4,9 +4,9 @@ import { getOrSetCache } from "@/lib/cache";
 import { liveKitEmitter } from "@/lib/livekitEmitter";
 import { getAuthenticatedUser } from "@/lib/authMiddlware";
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const disaster_id = params.id;
+    const { id: disaster_id } = await params;
     const cacheKey = `official-updates:${disaster_id}`;
 
     const { data, fromCache } = await getOrSetCache(cacheKey, async () => {
@@ -36,17 +36,18 @@ export async function GET(_: NextRequest, { params }: { params: { id: string } }
 }
 
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser(req);
   if (!user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
   }
 
+  const { id: disaster_id } = await params;
   const body = await req.json();
   const { title, description } = body;
 
   const { data, error } = await supabase.from("official_updates").insert([{
-    disaster_id: params.id,
+    disaster_id,
     title,
     description,
     posted_by: user.id
@@ -56,10 +57,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 
-  await liveKitEmitter("disaster-" + params.id, {
+  await liveKitEmitter("disaster-" + disaster_id, {
       type: "official_update_added",
       data: {
-        disaster_id: params.id,
+        disaster_id,
         update_id: data[0].id,
         title: data[0].title,
         description: data[0].description,
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     });
 
 
-  await supabase.from("cache").delete().eq("key", `official-updates:${params.id}`);
+  await supabase.from("cache").delete().eq("key", `official-updates:${disaster_id}`);
 
   return new Response(JSON.stringify(data), {
     status: 201,

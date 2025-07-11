@@ -18,8 +18,8 @@ type Resource = Omit<RawResourceRow, 'location_geojson'> & {
   location: Feature<Point>;
 };
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
 
   const { data: disaster, error: disasterErr } = await supabase
     .from('disasters')

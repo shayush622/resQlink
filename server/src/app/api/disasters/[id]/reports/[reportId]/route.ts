@@ -6,7 +6,7 @@ import { liveKitEmitter } from "@/lib/livekitEmitter";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string; reportId: string } }
+  { params }: { params: Promise<{ id: string; reportId: string }> }
 ) {
   try {
     const user = await getAuthenticatedUser(req);
@@ -18,7 +18,7 @@ export async function PUT(
       return new Response(JSON.stringify({ error: "Forbidden – admin only" }), { status: 403 });
     }
 
-    const { id: disaster_id, reportId } = params;
+    const { id: disaster_id, reportId } = await params;
     const { action } = await req.json();
 
     if (!["approve", "reject"].includes(action)) {
@@ -42,16 +42,19 @@ export async function PUT(
     // Invalidate relevant caches
     await supabase.from("cache").delete().eq("key", `reports:verified:${disaster_id}`);
 
+    // Send the full report object as required by the type
     await liveKitEmitter("disaster-" + disaster_id, {
-  type: "report_updated",
-  data: {
-    report_id: data[0].id,
-    verification_status: data[0].verification_status,
-    disaster_id,
-    updated_at: new Date().toISOString(),
-  },
-});
-
+      type: "report_updated",
+      data: {
+        disaster_id: data[0].disaster_id,
+        report_id: data[0].id,
+        content: data[0].content,
+        user_id: data[0].user_id,
+        image_url: data[0].image_url,
+        verification_status: data[0].verification_status,
+        created_at: data[0].created_at,
+      },
+    });
 
     return withCorsHeaders(
       new Response(JSON.stringify({ success: true, status: newStatus }), { status: 200 })

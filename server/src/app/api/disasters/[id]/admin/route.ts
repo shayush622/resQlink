@@ -10,7 +10,7 @@ type UpdateReportPayload = {
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: string; reportId: string } }
+  { params }: { params: Promise<{ id: string; reportId: string }> }
 ) {
   try {
     const user = await getAuthenticatedUser(req);
@@ -26,7 +26,7 @@ export async function PATCH(
       );
     }
 
-    const { reportId, id: disaster_id } = params;
+    const { reportId, id: disaster_id } = await params;
     const body: UpdateReportPayload = await req.json();
 
     if (!["verified", "rejected", "pending"].includes(body.verification_status)) {

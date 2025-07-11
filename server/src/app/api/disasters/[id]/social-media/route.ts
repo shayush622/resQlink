@@ -2,8 +2,8 @@ import { NextRequest } from "next/server";
 import { getOrSetCache } from "@/lib/cache";
 import { liveKitEmitter } from "@/lib/livekitEmitter";
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
-  const { id: disaster_id } = params;
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const { id: disaster_id } = await params;
   const cacheKey = `social:${disaster_id}`;
 
   try {

@@ -22,9 +22,9 @@ export function OPTIONS() {
   });
 }
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const disaster_id = params.id;
+    const { id: disaster_id } = await params;
     const { searchParams } = new URL(req.url);
     const refresh = searchParams.get('refresh') === 'true';
 
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
 
 
-export async function toNodeReadable(req: NextRequest): Promise<IncomingMessage> {
+async function toNodeReadable(req: NextRequest): Promise<IncomingMessage> {
   const bodyStream = await webStreamToNodeReadable(req.body as ReadableStream<Uint8Array>);
 
   const stream = bodyStream as unknown as IncomingMessage;
@@ -87,7 +87,7 @@ async function webStreamToNodeReadable(webStream: ReadableStream<Uint8Array>) {
   return stream;
 }
 
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getAuthenticatedUser(req);
     if (!user) {
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       return new Response(JSON.stringify({ error: "Forbidden – admin only" }), { status: 403 });
     }
 
-    const disaster_id = params.id;
+    const { id: disaster_id } = await params;
     const nodeReq = await toNodeReadable(req);
     const [fields, files] = await parseForm(nodeReq);
 

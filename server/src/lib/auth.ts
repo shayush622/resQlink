@@ -1,6 +1,6 @@
 // app/api/auth/[...nextauth]/auth.ts
 
-import type { AuthOptions, User, Session } from "next-auth";
+import type { User, Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
@@ -8,7 +8,7 @@ import type { JWT } from "next-auth/jwt";
 import bcrypt from "bcryptjs";
 import { createClient } from "@supabase/supabase-js";
 
-export const authOptions: AuthOptions = {
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",

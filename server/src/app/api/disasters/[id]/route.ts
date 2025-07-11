@@ -15,14 +15,14 @@ export function OPTIONS() {
   });
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser(req);
 if (!user) {
   return new Response("Unauthorized", { status: 401 });
 }
 
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await req.json();
 
     const {
@@ -72,14 +72,14 @@ if (!user) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const user = await getAuthenticatedUser(req);
 if (!user) {
   return new Response("Unauthorized", { status: 401 });
 }
 
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const { error } = await supabase
       .from('disasters')
@@ -102,9 +102,9 @@ if (!user) {
   }
 }
 
-export async function GET(_: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const { data, error } = await supabase
       .from('disasters')
       .select('*')
