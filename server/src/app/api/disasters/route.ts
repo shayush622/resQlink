@@ -4,19 +4,23 @@ import { supabase } from '@/lib/supabaseServer';
 import { liveKitEmitter } from '@/lib/livekitEmitter';
 
 export function OPTIONS() {
+  const allowedOrigin = process.env.CLIENT_URL || 'https://res-qlink-client.vercel.app'
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Origin": allowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      "Access-Control-Allow-Credentials": "true",
     },
   });
 }
 
 export async function POST(req: NextRequest) {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*");
+  const allowedOrigin = process.env.CLIENT_URL || 'https://res-qlink-client.vercel.app'
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  headers.set("Access-Control-Allow-Credentials", "true");
   headers.set("Content-Type", "application/json");
 
   try {
@@ -86,7 +90,9 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*");
+  const allowedOrigin = process.env.CLIENT_URL || 'https://res-qlink-client.vercel.app'
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  headers.set("Access-Control-Allow-Credentials", "true");
   headers.set("Content-Type", "application/json");
 
   try {

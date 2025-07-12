@@ -5,16 +5,20 @@ import { Disaster, DisasterWithDistance } from "@/types/disaster.type";
 
 export function OPTIONS() {
   const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", "*");
+  const allowedOrigin = process.env.CLIENT_URL || 'https://res-qlink-client.vercel.app'
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
   headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  headers.set("Access-Control-Allow-Credentials", "true");
 
   return new Response(null, { status: 204, headers });
 }
 
 export async function GET(req: NextRequest) {
   const headers = new Headers(); 
-  headers.set("Access-Control-Allow-Origin", "*");
+  const allowedOrigin = process.env.CLIENT_URL || 'https://res-qlink-client.vercel.app'
+  headers.set("Access-Control-Allow-Origin", allowedOrigin);
+  headers.set("Access-Control-Allow-Credentials", "true");
 
   const { searchParams } = new URL(req.url);
   const lat = searchParams.get("lat");
