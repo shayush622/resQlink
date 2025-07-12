@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { api } from '@/lib/api';
 
 export default function OfficialUpdateForm({ disasterId }: { disasterId: string }) {
   const [title, setTitle] = useState('');
@@ -14,13 +15,12 @@ export default function OfficialUpdateForm({ disasterId }: { disasterId: string 
     setSuccess(false);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${disasterId}/official-updates`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description }),
+      const res = await api.post(`/disasters/${disasterId}/official-updates`, {
+        title,
+        description,
       });
 
-      if (!res.ok) throw new Error('Failed to post update');
+      if (!res.status) throw new Error('Failed to post update');
       setTitle('');
       setDescription('');
       setSuccess(true);

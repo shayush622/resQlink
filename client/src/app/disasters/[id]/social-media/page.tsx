@@ -4,9 +4,9 @@ import { LiveKitRoom, useRoomContext } from '@livekit/components-react';
 import { useEffect, useState } from 'react';
 import { Tweet } from '@/types/disaster.types';
 import { useParams } from 'next/navigation';
+import { api } from '@/lib/api';
 
 const LIVEKIT_URL = process.env.NEXT_PUBLIC_LIVEKIT_URL!;
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
 
 function useLiveKitSocialUpdates(disasterId: string, onUpdate: () => void) {
   const room = useRoomContext(); // ✅ FIXED
@@ -42,9 +42,7 @@ function SocialMediaInner({ disasterId }: { disasterId: string }) {
 
   async function fetchTweets() {
     try {
-      const res = await fetch(`${BASE_URL}/disasters/${disasterId}/social-media`);
-      if (!res.ok) throw new Error('Failed to fetch tweets');
-      const data = await res.json();
+      const { data } = await api.get(`/disasters/${disasterId}/social-media`);
       setTweets(data);
     } catch (err) {
       console.error('Tweet fetch error:', err);

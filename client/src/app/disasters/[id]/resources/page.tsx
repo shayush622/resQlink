@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Resource } from '@/types/disaster.types';
 import ClientOnlyMap from '@/components/ClientOnlyMap';
+import { api } from '@/lib/api';
 
 export default function DisasterResourcesPage() {
   const { id } = useParams();
@@ -15,8 +16,7 @@ export default function DisasterResourcesPage() {
 
     async function fetchResources() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${id}/resources`);
-        const data = await res.json();
+        const { data } = await api.get(`/disasters/${id}/resources`);
         setResources(data);
       } catch (err) {
         console.error('Failed to fetch resources:', err);

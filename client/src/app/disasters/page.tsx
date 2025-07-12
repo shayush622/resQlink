@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Disaster } from "@/types/disaster.types";
 import { DisasterCard } from "@/components/DisasterCard";
+import { api } from "@/lib/api";
 
 export default function DisastersPage() {
   const [disasters, setDisasters] = useState<Disaster[]>([]);
@@ -12,9 +13,7 @@ export default function DisastersPage() {
   useEffect(() => {
     async function fetchDisasters() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters`);
-        if (!res.ok) throw new Error("Failed to fetch disasters");
-        const data = await res.json();
+        const { data } = await api.get('/disasters');
         setDisasters(data);
       } catch (err) {
         setError((err as Error).message);

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ReportList from '../ReportList';
 import { Report } from '@/types/disaster.types';
+import { api } from '@/lib/api';
 
 export default function ReportsPage() {
   const { id } = useParams();
@@ -14,9 +15,7 @@ export default function ReportsPage() {
 
     async function fetchReports() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${id}/reports`);
-        if (!res.ok) throw new Error('Failed to fetch reports');
-        const data = await res.json();
+        const { data } = await api.get(`/disasters/${id}/reports`);
         setReports(data);
       } catch (err) {
         console.error('Error fetching reports:', err);

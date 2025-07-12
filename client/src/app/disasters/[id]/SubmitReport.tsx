@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { api } from '@/lib/api';
 
 type Props = {
   disasterId: string;
@@ -31,12 +32,13 @@ export default function SubmitReportForm({ disasterId, onSuccess }: Props) {
 
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${disasterId}/reports?refresh=true`, {
-        method: 'POST',
-        body: formData,
+      const res = await api.post(`/disasters/${disasterId}/reports?refresh=true`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
 
-      if (!res.ok) throw new Error('Failed to submit report');
+      if (!res.status) throw new Error('Failed to submit report');
 
       toast.success('Report submitted!');
       setContent('');

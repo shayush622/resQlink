@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 
 interface Report {
   id: string;
@@ -18,8 +19,7 @@ export default function ReportList({ disasterId }: { disasterId: string }) {
   useEffect(() => {
     async function fetchReports() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${disasterId}/reports`);
-        const data = await res.json();
+        const { data } = await api.get(`/disasters/${disasterId}/reports`);
         setReports(data);
       } catch (err) {
         console.error("Failed to load reports:", err);

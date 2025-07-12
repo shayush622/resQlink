@@ -6,6 +6,7 @@ import {
 } from '@livekit/components-react';
 import { useEffect, useState } from 'react';
 import { OfficialUpdate } from '@/types/disaster.types';
+import { api } from '@/lib/api';
 import { useLiveKitOfficialUpdates } from '@/hooks/useLiveKitOfficialUpdates';
 
 const LIVEKIT_URL = process.env.NEXT_PUBLIC_LIVEKIT_URL!;
@@ -16,11 +17,7 @@ function InnerOfficialUpdateList({ disasterId }: { disasterId: string }) {
 
   const fetchUpdates = async () => {
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${disasterId}/official-updates`
-      );
-      if (!res.ok) throw new Error('Failed to fetch updates');
-      const data = await res.json();
+      const { data } = await api.get(`/disasters/${disasterId}/official-updates`);
       setUpdates(data);
     } catch (err) {
       console.error('Error fetching updates:', err);

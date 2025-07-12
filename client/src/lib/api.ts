@@ -1,6 +1,6 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: 'https://res-qlink-server.vercel.app/api',
+  baseURL: `${process.env.NEXT_PUBLIC_BASE_URL}`,
   withCredentials: true,
 });

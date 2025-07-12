@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
+import { api } from '@/lib/api';
 
 export default function DisasterDetailsPage() {
   const { id } = useParams();
@@ -19,9 +20,7 @@ export default function DisasterDetailsPage() {
 
     async function fetchDisaster() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/disasters/${id}`);
-        if (!res.ok) throw new Error('Failed to fetch disaster');
-        const data = await res.json();
+        const { data } = await api.get(`/disasters/${id}`);
         setDisaster(data);
       } catch (err) {
         console.error('Error fetching disaster:', err);
