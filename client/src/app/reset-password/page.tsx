@@ -27,7 +27,7 @@ function ResetPasswordPageContent() {
     setError('');
 
     try {
-      await axios.post('/api/reset-password', { token, password });
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`, { token, password });
       setStatus('success');
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;

@@ -29,7 +29,7 @@ export default function RegisterPage() {
     setError('');
 
     try {
-      await axios.post('/api/register', form);
+      await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}/register`, form);
 
       router.push('/login');
     } catch (err) {
